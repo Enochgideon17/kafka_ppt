@@ -9,7 +9,7 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
-
+        
         body {
             font-family: 'Inter', sans-serif;
             background-color: #ffffff;
@@ -33,16 +33,24 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        .glow-text {
+            text-shadow: none;
+        }
+
+        .glow-box {
+            box-shadow: none;
+        }
     </style>
 </head>
 
 <body class="h-screen w-screen flex flex-col items-center justify-center bg-white">
 
-    <div id="presentation" class="relative w-full max-w-6xl h-[80vh] bg-white rounded-3xl border border-gray-300 overflow-hidden flex flex-col">
-
+    <div id="presentation" class="relative w-full max-w-6xl h-[80vh] bg-white rounded-3xl border border-gray-300 overflow-hidden flex flex-col backdrop-blur-sm">
+        
         <!-- Progress Bar -->
         <div class="h-1 w-full bg-gray-200 absolute top-0 left-0">
-            <div id="progress-bar" class="h-full bg-blue-500 transition-all duration-300 w-0"></div>
+            <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-400 to-purple-500 transition-all duration-300 w-0"></div>
         </div>
 
         <!-- Slides -->
@@ -50,81 +58,110 @@
 
             <!-- Slide 1 -->
             <div class="slide active flex-col items-center text-center w-full">
-                <i data-lucide="zap" class="w-16 h-16 text-purple-600 mb-6"></i>
+                <div class="p-6 bg-purple-100 rounded-full mb-6 border border-purple-300">
+                    <i data-lucide="zap" class="w-16 h-16 text-purple-600"></i>
+                </div>
                 <h1 class="text-6xl font-bold mb-6 text-gray-900">Apache Kafka</h1>
                 <h2 class="text-3xl text-gray-600 mb-8">Real-Time Data Streaming</h2>
+                <div class="flex gap-4 text-gray-600 text-lg">
+                    <span class="bg-gray-100 px-4 py-2 rounded-full border border-gray-300">Concepts</span>
+                    <span class="bg-gray-100 px-4 py-2 rounded-full border border-gray-300">Architecture</span>
+                    <span class="bg-gray-100 px-4 py-2 rounded-full border border-gray-300">Hands-on Demo</span>
+                </div>
             </div>
 
             <!-- Slide 2 -->
             <div class="slide flex-col items-start w-full max-w-4xl">
-                <h2 class="text-4xl font-bold text-blue-600 mb-8">What is Kafka?</h2>
-                <ul class="space-y-6 text-xl text-gray-700">
-                    <li>✔ Distributed event streaming platform</li>
-                    <li>✔ Handles real-time data feeds</li>
-                    <li>✔ Works as a reliable middleman</li>
-                </ul>
+                <h2 class="text-4xl font-bold text-blue-600 mb-8 flex items-center gap-3">
+                    <i data-lucide="help-circle" class="w-8 h-8"></i> What is Kafka?
+                </h2>
+                <div class="grid grid-cols-2 gap-12 w-full items-center">
+                    <ul class="space-y-6 text-xl text-gray-700">
+                        <li class="flex items-start gap-3">✔ Distributed event streaming platform</li>
+                        <li class="flex items-start gap-3">✔ Handles real-time data feeds</li>
+                        <li class="flex items-start gap-3">✔ Works as a reliable middleman</li>
+                    </ul>
+                    <div class="bg-gray-100 p-8 rounded-2xl border border-blue-300 text-center">
+                        <p class="text-2xl font-semibold text-blue-600">"Kafka enables real-time communication between systems."</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Slide 3 -->
             <div class="slide flex-col items-start w-full max-w-4xl">
-                <h2 class="text-4xl font-bold text-red-500 mb-8">Problem Without Kafka</h2>
-                <p class="text-xl text-gray-700">
-                    Tight coupling: If one service slows down, the entire system is affected.
-                </p>
+                <h2 class="text-4xl font-bold text-red-500 mb-8 flex items-center gap-3">
+                    <i data-lucide="alert-triangle" class="w-8 h-8"></i> The Problem (Without Kafka)
+                </h2>
+                <div class="flex w-full justify-between items-center bg-gray-100 p-8 rounded-2xl border border-red-300 mb-8">
+                    <div class="text-center p-4 bg-gray-200 rounded-xl">Service A</div>
+                    <div>↔</div>
+                    <div class="text-center p-4 bg-gray-200 rounded-xl">Service B</div>
+                    <div>↔</div>
+                    <div class="text-center p-4 bg-red-200 rounded-xl border-2 border-red-500">Slow Service</div>
+                </div>
+                <div class="w-full text-center bg-red-100 p-4 rounded-lg border border-red-300">
+                    <p class="text-xl text-red-600 font-semibold">Tight coupling: One slow service slows the entire system.</p>
+                </div>
             </div>
 
             <!-- Slide 4 -->
             <div class="slide flex-col items-start w-full max-w-5xl">
-                <h2 class="text-4xl font-bold text-blue-600 mb-8">E-Commerce Example</h2>
-                <ul class="text-lg text-gray-700 space-y-4">
-                    <li>• User places order</li>
-                    <li>• Update inventory</li>
-                    <li>• Send email</li>
-                    <li>• Generate invoice</li>
-                    <li>• Update dashboard</li>
-                </ul>
+                <h2 class="text-4xl font-bold text-blue-600 mb-8">Real-World Example: E-Commerce</h2>
+                <div class="grid grid-cols-3 gap-8 w-full">
+                    <div class="col-span-1 flex flex-col items-center justify-center border-r border-gray-300 pr-8">
+                        <h3 class="text-2xl font-bold text-gray-900">User Places Order</h3>
+                    </div>
+                    <div class="col-span-2 grid grid-cols-2 gap-4">
+                        <div class="bg-gray-100 p-4 rounded-xl border border-gray-300">Update Inventory</div>
+                        <div class="bg-gray-100 p-4 rounded-xl border border-gray-300">Send Email</div>
+                        <div class="bg-gray-100 p-4 rounded-xl border border-gray-300">Generate Invoice</div>
+                        <div class="bg-gray-100 p-4 rounded-xl border border-gray-300">Update Dashboard</div>
+                    </div>
+                </div>
             </div>
 
             <!-- Slide 5 -->
             <div class="slide flex-col items-center text-center w-full">
-                <h2 class="text-4xl font-bold text-purple-600 mb-8">Kafka as Middleman</h2>
-                <p class="text-xl text-gray-700">
-                    Producers → Kafka → Consumers
-                </p>
+                <h2 class="text-4xl font-bold text-purple-600 mb-12">Kafka as Middleman</h2>
+                <p class="text-xl text-gray-700">Producers → Kafka → Consumers</p>
             </div>
 
             <!-- Slide 6 -->
             <div class="slide flex-col items-start w-full max-w-4xl">
                 <h2 class="text-4xl font-bold text-blue-600 mb-8">Core Concepts</h2>
-                <ul class="text-lg text-gray-700 space-y-4">
-                    <li><b>Producer:</b> Sends data</li>
-                    <li><b>Topic:</b> Stores data</li>
-                    <li><b>Consumer:</b> Reads data</li>
-                </ul>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                    <div class="bg-gray-100 p-6 rounded-xl border-t-4 border-blue-400">
+                        <h3 class="text-xl font-bold text-gray-900">Producer</h3>
+                        <p class="text-gray-600">Sends data</p>
+                    </div>
+                    <div class="bg-gray-100 p-6 rounded-xl border-t-4 border-purple-400">
+                        <h3 class="text-xl font-bold text-gray-900">Topic</h3>
+                        <p class="text-gray-600">Stores data</p>
+                    </div>
+                    <div class="bg-gray-100 p-6 rounded-xl border-t-4 border-green-400">
+                        <h3 class="text-xl font-bold text-gray-900">Consumer</h3>
+                        <p class="text-gray-600">Reads data</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Slide 7 -->
-            <div class="slide flex-col items-center text-center w-full">
+            <div class="slide flex-col items-center w-full text-center">
                 <h2 class="text-5xl font-bold text-gray-900 mb-8">Summary</h2>
                 <ul class="text-xl text-gray-700 space-y-4">
                     <li>✔ Real-time systems</li>
                     <li>✔ Scalable</li>
                     <li>✔ Reliable</li>
-                    <li>✔ Used in microservices</li>
+                    <li>✔ Microservices ready</li>
                 </ul>
             </div>
 
         </div>
 
         <!-- Controls -->
-        <div class="h-20 border-t border-gray-300 bg-gray-50 flex items-center justify-between px-8 absolute bottom-0 w-full">
+        <div class="h-20 border-t border-gray-300 bg-gray-100 flex items-center justify-between px-8 absolute bottom-0 w-full">
             <button onclick="prevSlide()">Previous</button>
-
-            <div>
-                Slide <span id="current-slide-num">1</span> /
-                <span id="total-slides">7</span>
-            </div>
-
+            <div>Slide <span id="current-slide-num">1</span> / <span id="total-slides">7</span></div>
             <button onclick="nextSlide()">Next</button>
         </div>
     </div>
@@ -149,17 +186,13 @@
         }
 
         function nextSlide() {
-            if (currentSlide < totalSlides - 1) {
-                currentSlide++;
-                updateSlide();
-            }
+            if (currentSlide < totalSlides - 1) currentSlide++;
+            updateSlide();
         }
 
         function prevSlide() {
-            if (currentSlide > 0) {
-                currentSlide--;
-                updateSlide();
-            }
+            if (currentSlide > 0) currentSlide--;
+            updateSlide();
         }
 
         document.addEventListener('keydown', (e) => {
