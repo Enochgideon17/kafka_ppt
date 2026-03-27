@@ -41,6 +41,63 @@
         .glow-box {
             box-shadow: none;
         }
+/* Card Styling */
+.card {
+    background: #f3f4f6;
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid #d1d5db;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.card img {
+    width: 60px;
+    margin: 0 auto 10px;
+    transition: transform 0.3s ease;
+}
+
+.card p {
+    font-weight: 600;
+    color: #111827;
+}
+
+/* Hover Effects */
+.card:hover {
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.card:hover img {
+    transform: scale(1.2) rotate(5deg);
+}
+
+/* Floating Animation */
+.floating {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Fade Up Animation */
+.animate-fadeUp {
+    animation: fadeUp 0.8s ease forwards;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
     </style>
 </head>
 
