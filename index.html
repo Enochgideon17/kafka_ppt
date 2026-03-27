@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apache Kafka - Real-Time Data Streaming</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* slate-900 */
+            color: #f8fafc; /* slate-50 */
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glow-text {
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.5); /* purple glow */
+        }
+
+        .glow-box {
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.2); /* cyan glow */
+        }
+        
+        .animated-arrow {
+            animation: bounceRight 2s infinite;
+        }
+
+        @keyframes bounceRight {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-gray-900 to-black">
+
+    <!-- Presentation Container -->
+    <div id="presentation" class="relative w-full max-w-6xl h-[80vh] bg-slate-800/50 rounded-3xl border border-slate-700 glow-box overflow-hidden flex flex-col backdrop-blur-sm">
+        
+        <!-- Progress Bar -->
+        <div class="h-1 w-full bg-slate-700 absolute top-0 left-0">
+            <div id="progress-bar" class="h-full bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-300 w-0"></div>
+        </div>
+
+        <!-- Slide Content Area -->
+        <div class="flex-1 relative p-12 flex flex-col justify-center items-center w-full">
+
+            <!-- Slide 1 -->
+            <div class="slide active flex-col items-center text-center w-full">
+                <div class="p-6 bg-purple-500/10 rounded-full mb-6 border border-purple-500/30">
+                    <i data-lucide="zap" class="w-16 h-16 text-purple-400"></i>
+                </div>
+                <h1 class="text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500 glow-text">Apache Kafka</h1>
+                <h2 class="text-3xl text-slate-300 font-light mb-8">Real-Time Data Streaming</h2>
+                <div class="flex gap-4 text-slate-400 text-lg">
+                    <span class="bg-slate-800 px-4 py-2 rounded-full border border-slate-700">Concepts</span>
+                    <span class="bg-slate-800 px-4 py-2 rounded-full border border-slate-700">Architecture</span>
+                    <span class="bg-slate-800 px-4 py-2 rounded-full border border-slate-700">Hands-on Demo</span>
+                </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="slide flex-col items-start w-full max-w-4xl">
+                <h2 class="text-4xl font-bold text-cyan-400 mb-8 flex items-center gap-3">
+                    <i data-lucide="help-circle" class="w-8 h-8"></i> What is Kafka?
+                </h2>
+                <div class="grid grid-cols-2 gap-12 w-full items-center">
+                    <ul class="space-y-6 text-xl text-slate-300">
+                        <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-6 h-6 text-purple-400 mt-1"></i> Distributed event streaming platform</li>
+                        <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-6 h-6 text-purple-400 mt-1"></i> Handles real-time data feeds</li>
+                        <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-6 h-6 text-purple-400 mt-1"></i> Works as a reliable middleman</li>
+                    </ul>
+                    <div class="bg-slate-800 p-8 rounded-2xl border border-cyan-500/30 text-center">
+                        <p class="text-2xl font-semibold text-cyan-300">"Kafka enables real-time communication between systems."</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="slide flex-col items-start w-full max-w-4xl">
+                <h2 class="text-4xl font-bold text-purple-400 mb-8 flex items-center gap-3">
+                    <i data-lucide="alert-triangle" class="w-8 h-8"></i> The Problem (Without Kafka)
+                </h2>
+                <div class="flex w-full justify-between items-center bg-slate-800/50 p-8 rounded-2xl border border-red-500/20 mb-8">
+                    <div class="text-center p-4 bg-slate-700 rounded-xl"><i data-lucide="server" class="w-12 h-12 text-slate-300 mx-auto mb-2"></i>Service A</div>
+                    <i data-lucide="arrow-right-left" class="w-8 h-8 text-red-400"></i>
+                    <div class="text-center p-4 bg-slate-700 rounded-xl"><i data-lucide="server" class="w-12 h-12 text-slate-300 mx-auto mb-2"></i>Service B</div>
+                    <i data-lucide="arrow-right-left" class="w-8 h-8 text-red-400"></i>
+                    <div class="text-center p-4 bg-slate-700 rounded-xl border-2 border-red-500"><i data-lucide="server-crash" class="w-12 h-12 text-red-400 mx-auto mb-2"></i>Slow Service</div>
+                </div>
+                <div class="w-full text-center bg-red-500/10 p-4 rounded-lg border border-red-500/30">
+                    <p class="text-xl text-red-300 font-semibold">Tight coupling: One slow service slows the entire system.</p>
+                </div>
+            </div>
+
+            <!-- Slide 4 -->
+            <div class="slide flex-col items-start w-full max-w-5xl">
+                <h2 class="text-4xl font-bold text-cyan-400 mb-8">Real-World Example: E-Commerce</h2>
+                <div class="grid grid-cols-3 gap-8 w-full">
+                    <div class="col-span-1 flex flex-col items-center justify-center border-r border-slate-700 pr-8">
+                        <div class="p-6 bg-blue-500/20 rounded-full mb-4"><i data-lucide="shopping-cart" class="w-12 h-12 text-blue-400"></i></div>
+                        <h3 class="text-2xl font-bold text-white">User Places Order</h3>
+                    </div>
+                    <div class="col-span-2 grid grid-cols-2 gap-4">
+                        <div class="bg-slate-800 p-4 rounded-xl flex items-center gap-4 border border-slate-600"><i data-lucide="package" class="w-8 h-8 text-orange-400"></i> <span>Update Inventory</span></div>
+                        <div class="bg-slate-800 p-4 rounded-xl flex items-center gap-4 border border-slate-600"><i data-lucide="mail" class="w-8 h-8 text-green-400"></i> <span>Send Email</span></div>
+                        <div class="bg-slate-800 p-4 rounded-xl flex items-center gap-4 border border-slate-600"><i data-lucide="file-text" class="w-8 h-8 text-yellow-400"></i> <span>Generate Invoice</span></div>
+                        <div class="bg-slate-800 p-4 rounded-xl flex items-center gap-4 border border-slate-600"><i data-lucide="layout-dashboard" class="w-8 h-8 text-purple-400"></i> <span>Update Dashboard</span></div>
+                    </div>
+                </div>
+                <p class="mt-8 text-slate-400 text-center w-full italic">Problem: If the Email service is down, does the whole order fail?</p>
+            </div>
+
+            <!-- Slide 5 -->
+            <div class="slide flex-col items-center text-center w-full">
+                <h2 class="text-4xl font-bold text-purple-400 mb-12">The Solution: Kafka as a Middleman</h2>
+                
+                <div class="flex items-center justify-center gap-8 w-full max-w-4xl">
+                    <!-- Producers -->
+                    <div class="flex flex-col gap-4">
+                        <div class="bg-slate-700 p-4 rounded-lg">Order Service</div>
+                    </div>
+                    
+                    <i data-lucide="arrow-right" class="w-8 h-8 text-cyan-400 animated-arrow"></i>
+                    
+                    <!-- Kafka -->
+                    <div class="bg-gradient-to-br from-purple-600 to-cyan-600 p-1 rounded-2xl glow-box">
+                        <div class="bg-slate-900 p-8 rounded-xl flex flex-col items-center">
+                            <i data-lucide="layers" class="w-16 h-16 text-white mb-4"></i>
+                            <h3 class="text-2xl font-bold text-white">Apache Kafka</h3>
+                        </div>
+                    </div>
+                    
+                    <i data-lucide="arrow-right" class="w-8 h-8 text-cyan-400 animated-arrow"></i>
+                    
+                    <!-- Consumers -->
+                    <div class="flex flex-col gap-4">
+                        <div class="bg-slate-700 p-3 rounded-lg text-sm">Inventory</div>
+                        <div class="bg-slate-700 p-3 rounded-lg text-sm">Email</div>
+                        <div class="bg-slate-700 p-3 rounded-lg text-sm">Invoices</div>
+                    </div>
+                </div>
+                <p class="mt-12 text-2xl font-semibold text-cyan-300">"Kafka enables chain reactions of events without tight coupling."</p>
+            </div>
+
+            <!-- Slide 6 -->
+            <div class="slide flex-col items-start w-full max-w-4xl">
+                <h2 class="text-4xl font-bold text-cyan-400 mb-8">Core Concepts</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                    
+                    <div class="bg-slate-800 p-6 rounded-xl border-t-4 border-blue-400 hover:-translate-y-2 transition-transform">
+                        <h3 class="text-2xl font-bold text-white mb-4 flex items-center gap-2"><i data-lucide="upload-cloud" class="text-blue-400"></i> Producer</h3>
+                        <p class="text-slate-400">Applications that generate and send data (events) to Kafka.</p>
+                    </div>
+
+                    <div class="bg-slate-800 p-6 rounded-xl border-t-4 border-purple-400 hover:-translate-y-2 transition-transform">
+                        <h3 class="text-2xl font-bold text-white mb-4 flex items-center gap-2"><i data-lucide="database" class="text-purple-400"></i> Topics</h3>
+                        <p class="text-slate-400">Categories or folders where events are stored (e.g., 'orders', 'payments').</p>
+                    </div>
+
+                    <div class="bg-slate-800 p-6 rounded-xl border-t-4 border-green-400 hover:-translate-y-2 transition-transform">
+                        <h3 class="text-2xl font-bold text-white mb-4 flex items-center gap-2"><i data-lucide="download-cloud" class="text-green-400"></i> Consumer</h3>
+                        <p class="text-slate-400">Applications that subscribe to topics to read and process the events.</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Slide 7 -->
+            <div class="slide flex-col items-center w-full text-center">
+                <h2 class="text-5xl font-bold text-white mb-8">Summary & Conclusion</h2>
+                <div class="flex justify-center mb-8 gap-4">
+                     <i data-lucide="activity" class="w-16 h-16 text-cyan-400"></i>
+                     <i data-lucide="shield-check" class="w-16 h-16 text-purple-400"></i>
+                </div>
+                <ul class="text-2xl text-slate-300 space-y-6 text-left inline-block">
+                    <li>✅ Enables high-throughput, real-time systems</li>
+                    <li>✅ Highly scalable with Partitions & Consumer Groups</li>
+                    <li>✅ Data persistence sets it apart from traditional brokers</li>
+                    <li>✅ Essential skill for modern microservice architectures</li>
+                </ul>
+                <p class="mt-12 text-xl text-cyan-400 font-semibold bg-cyan-900/30 px-6 py-3 rounded-full">Ready for the Python + Docker Demo!</p>
+            </div>
+
+        </div>
+
+        <!-- Controls -->
+        <div class="h-20 border-t border-slate-700 bg-slate-800/80 flex items-center justify-between px-8 absolute bottom-0 w-full">
+            <button onclick="prevSlide()" class="text-slate-400 hover:text-white flex items-center gap-2 transition-colors">
+                <i data-lucide="chevron-left"></i> Previous
+            </button>
+            <div class="text-slate-500 font-mono text-sm">
+                Slide <span id="current-slide-num" class="text-cyan-400 font-bold">1</span> / <span id="total-slides">7</span>
+                <span class="ml-4 hidden sm:inline">(Use Arrow Keys)</span>
+            </div>
+            <button onclick="nextSlide()" class="text-slate-400 hover:text-white flex items-center gap-2 transition-colors">
+                Next <i data-lucide="chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Slide Logic
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').innerText = totalSlides;
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+            
+            // Update Progress Bar & Counter
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('current-slide-num').innerText = currentSlide + 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Initialize first slide
+        updateSlide();
+    </script>
+</body>
+</html>
